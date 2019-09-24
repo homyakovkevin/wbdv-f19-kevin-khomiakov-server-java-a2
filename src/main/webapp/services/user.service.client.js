@@ -13,9 +13,7 @@ function AdminUserServiceClient() {
             headers: {
                 'content-type': 'application/json'
             }
-        }).then(function(response) {
-            return response.json()
-        })
+        }).then(function(response) {})
     }
 
     // GET - Read
@@ -26,7 +24,7 @@ function AdminUserServiceClient() {
             })
     }
 
-    function updateUser(userId, user) {
+    function updateUser(userId, user, callback) {
         return fetch('https://wbdv-generic-server.herokuapp.com/api/khomiakovkevin/users' + '/' + userId, {
             method: "put",
             body: JSON.stringify(user),
@@ -38,7 +36,7 @@ function AdminUserServiceClient() {
         });
     }
 
-    function deleteUser(userId) {
+    function deleteUser(userId, callback) {
         return fetch('https://wbdv-generic-server.herokuapp.com/api/khomiakovkevin/users' + '/' + userId, {
             method: "delete"
         }).then(function(response) {});
