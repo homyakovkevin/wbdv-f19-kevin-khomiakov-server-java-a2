@@ -3,6 +3,7 @@
     var $removeBtn, $editBtn, $createBtn;
     var $firstNameFld, $lastNameFld;
     var $roleFld;
+    var $idFld;
     var $userRowTemplate, $tbody;
     var userService = new AdminUserServiceClient();
     $(main);
@@ -57,12 +58,14 @@
         var clone = $userRowTemplate.clone();
 
         clone.attr("class", "wbdv-user");
-        clone.attr("id", user.id);
+        clone.attr("id", "user" + user.id);
         clone.find(".wbdv-username").html(user.username);
         clone.find(".wbdv-password").html(user.password);
         clone.find(".wbdv-first-name").html(user.firstName);
         clone.find(".wbdv-last-name").html(user.lastName);
         clone.find(".wbdv-role").html(user.role);
+
+        // clone.find()
 
         clone.on("click", ".wbdv-remove", function() {
             deleteUser(user.id);
@@ -71,15 +74,28 @@
             selectUser(user.id);
         });
 
-        console.log(clone)
-
         $tbody.append(clone);
     }
 
     function updateUser() {
-        user = getData($idFld.val());
 
-        console.log($idFld);
+        var username = $usernameFld.val();
+        var pass = $passwordFld.val();
+        var fname = $firstNameFld.val();
+        var lname = $lastNameFld.val();
+        var role = $roleFld.val();
+
+        user = 
+        {
+            "id": $idFld.val(),
+            "username": username,
+            "password": pass,
+            "firstName": fname,
+            "lastName": lname,
+            "role": role
+        }
+
+        console.log(user);
 
         if (user != null) {
             userService.updateUser($idFld.val(), user).then(findAllUsers);
@@ -100,9 +116,11 @@
 
     function selectUser(id) {
 
-        $row = $(id);
+        $row = $("#user" + id);
 
         $idFld.val(id);
+
+
 
         $usernameFld.val($row.find(".wbdv-username").html());
         $passwordFld.val($row.find(".wbdv-password").html());
@@ -111,21 +129,6 @@
         $roleFld.val($row.find(".wbdv-role").html()).change();
     }
 
-    function updateUser() {
-        if ($idFld.val() == "") {
-            alert("Something went wrong.");
-            return;
-        }
-
-        user = getData($idFld.val());
-
-        if (user != null) {
-            userService.updateUser($idFld.val(), user).then(findAllUsers);
-            clear();
-        }
-
-        $idFld.val("");
-    }
 
     function renderUsers(users) {
         $tbody.empty();

@@ -31,9 +31,7 @@ function AdminUserServiceClient() {
             headers: {
                 "content-type": "application/json"
             }
-        }).then(function(response) {
-            return response.json();
-        });
+        }).then(function(response) {});
     }
 
     function deleteUser(userId, callback) {
