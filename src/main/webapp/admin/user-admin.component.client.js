@@ -35,11 +35,11 @@
     function createUser() {
         user = getData();
 
-        if (user != null) {
-            userService.createUser(user).then(findAllUsers);
+        userService
+            .createUser(user)
+            .then(findAllUsers);
 
-            clear();
-        }
+        clearForm();
     }
 
     function getData() {
@@ -65,8 +65,6 @@
         clone.find(".wbdv-last-name").html(user.lastName);
         clone.find(".wbdv-role").html(user.role);
 
-        // clone.find()
-
         clone.on("click", ".wbdv-remove", function() {
             deleteUser(user.id);
         });
@@ -85,8 +83,7 @@
         var lname = $lastNameFld.val();
         var role = $roleFld.val();
 
-        user = 
-        {
+        user = {
             "id": $idFld.val(),
             "username": username,
             "password": pass,
@@ -95,13 +92,18 @@
             "role": role
         }
 
-        console.log(user);
-
         if (user != null) {
             userService.updateUser($idFld.val(), user).then(findAllUsers);
-            clear();
+            clearForm();
         }
+
         $idFld.val("");
+    }
+
+    function findUserById(id) {
+        userService
+            .findUserById(id)
+            .then(renderUser);
     }
 
     function findAllUsers() {
@@ -111,7 +113,9 @@
     }
 
     function deleteUser(id) {
-        userService.deleteUser(id).then(findAllUsers);
+        userService
+            .deleteUser(id)
+            .then(findAllUsers);
     }
 
     function selectUser(id) {
@@ -119,8 +123,6 @@
         $row = $("#user" + id);
 
         $idFld.val(id);
-
-
 
         $usernameFld.val($row.find(".wbdv-username").html());
         $passwordFld.val($row.find(".wbdv-password").html());
@@ -138,7 +140,7 @@
         }
     }
 
-    function clear() {
+    function clearForm() {
         $usernameFld.val("");
         $passwordFld.val("");
         $firstNameFld.val("");
