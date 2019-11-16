@@ -1,19 +1,37 @@
 package com.example.myapp_a2.models;
-import java.util.List;
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.*;
+import javax.persistence.*;
 
+@Entity
 public class Module {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String title;
+    @OneToMany(mappedBy = "module",cascade = CascadeType.REMOVE)
     private List<Lesson> lessons = new ArrayList<>();
 
-    public Module(Integer id, String title) {
-        this.id = id;
+    public Module(String title) {
         this.title = title;
     }
 
+    public Module() {}
+
+    @ManyToOne
+    @JsonIgnore
+    private Course course;
+
+    @Transient
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
     public Integer getId() {
-        return this.id;
+        return id;
     }
 
     public void setId(Integer id) {
@@ -21,7 +39,7 @@ public class Module {
     }
 
     public String getTitle() {
-        return this.title;
+        return title;
     }
 
     public void setTitle(String title) {
@@ -29,7 +47,7 @@ public class Module {
     }
 
     public List<Lesson> getLessons() {
-        return this.lessons;
+        return lessons;
     }
 
     public void setLessons(List<Lesson> lessons) {

@@ -1,78 +1,66 @@
 package com.example.myapp_a2.services;
-
+import com.example.myapp_a2.models.Topic;
 import com.example.myapp_a2.models.Widget;
+import com.example.myapp_a2.repositories.WidgetRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.example.myapp_a2.repositories.TopicRepository;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
-
+@Service
 public class WidgetService {
-    private List<Widget> widgets;
+    @Autowired
+    WidgetRepository wr;
 
-    public WidgetService() {
-        this.widgets = new ArrayList<>(seed());
-    }
-
+    @Autowired
+    TopicRepository tr;
 
     public List<Widget> createWidget(Widget widget) {
-        widget.setId((new Random()).nextInt());
-        this.widgets.add(widget);
-        return this.widgets;
+        wr.save(widget);
+        return wr.findAllWidgets();
     }
 
     public List<Widget> findAllWidgets() {
-        return this.widgets;
+        return wr.findAllWidgets();
     }
 
-    public Widget findWidgetById(Integer widgetId) {
-        return this.widgets.stream().filter(w -> w.getId().equals(widgetId)).collect(Collectors.toList()).get(0);
+    public Widget findWidgetById(Integer wid) {
+        return wr.findWidgetById(wid);
     }
 
-    public Widget updateWidget(Integer widgetId, Widget widget) {
-        this.widgets = this.widgets.stream().map(w -> w.getId().equals(widgetId) ? widget : w).collect(Collectors.toList());
-        return this.findWidgetById(widgetId);
+    public Widget updateWidget(Integer wid, Widget widget) {
+        Widget current = wr.findWidgetById(wid);
+        current.setName(widget.getName());
+        current.setType(widget.getType());
+        current.setTitle(widget.getTitle());
+        current.setListType(widget.getListType());
+        current.setSrc(widget.getSrc());
+        current.setHref(widget.getHref());
+        current.setSize(widget.getSize());
+        current.setItems(widget.getItems());
+        current.setText(widget.getText());
+        return wr.save(current);
     }
 
-    public List<Widget> deleteWidget(Integer widgetId) {
-        this.widgets = this.widgets.stream().filter(w -> !w.getId().equals(widgetId)).collect(Collectors.toList());
-        return this.widgets;
+    public List<Widget> deleteWidget(Integer wid) {
+        Widget current = wr.findWidgetById(wid);
+        wr.delete(current);
+        return wr.findAllWidgets();
     }
 
-    public List<Widget> updateOrder(List<Widget> widgets){
-        this.widgets=widgets;
-        return this.widgets;
-    }
-
-    private List<Widget> seed() {
-
-        List<Widget> widgets = new ArrayList<>();
-
-        Widget h1 = new Widget(123, "Widget 1", "HEADING");
-        h1.setSize("h1");
-        h1.setText("The Document Object Model");
-        widgets.add(h1);
-
-        Widget l1 = new Widget(234, "Widget 2", "LIST");
-        l1.setItems("Nodes,Attributes,Tag names,IDs,Styles,Classes");
-        l1.setListType("unordered");
-        widgets.add(l1);
-
-        Widget p1 = new Widget(345, "Widget 3", "PARAGRAPH");
-        p1.setText("This topic introduces the DOM");
-        widgets.add(p1);
-
-        Widget i1 = new Widget(456, "Widget 4", "IMAGE");
-        i1.setSrc("https://picsum.photos/200");
-        widgets.add(i1);
-
-        Widget link1 = new Widget(567, "Widget 5", "LINK");
-        link1.setTitle("The DOM");
-        link1.setHref("https://en.wikipedia.org/wiki/Document_Object_Model");
-        widgets.add(link1);
-
-
+    public List<Widget> updateOrder(List<Widget> wts, Integer topicId){
+        tr.findTopicById(topicId).setWidgets(wts);
+        Topic topic=tr.findTopicById(topicId);
+        for(Widget w:wts){
+            w.setTopic(topic);
+            wr.save(w);
+        }
+        List<Widget> widgets=wr.findAllWidgetsForTopic(topicId);
         return widgets;
+    }
+
+    public List<Widget> findAllWidgetsForTopic(Integer tid){
+        return wr.findAllWidgetsForTopic(tid);
     }
 
 }
